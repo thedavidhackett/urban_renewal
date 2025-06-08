@@ -1,0 +1,7 @@
+stages:
+  scrape-data:
+    cmd: python urban_renewal/scrape_urban_renewal_locations.py
+    deps:
+    - urban_renewal/scrape_urban_renewal_locations.py
+    outs:
+    - data/raw/urban_renewal_location_photos.csv

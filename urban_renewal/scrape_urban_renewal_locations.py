@@ -59,9 +59,12 @@ def main() -> None:
 
 
     
-    pd.DataFrame.from_records(records).to_csv(RAW_DATA_DIR / 'results.csv', index=False)
+    pd.DataFrame.from_records(records).to_csv(RAW_DATA_DIR / 'urban_renewal_location_photos.csv', index=False)
 
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        pd.read_csv(RAW_DATA_DIR / 'urban_renewal_location_photos.csv')
+    except FileNotFoundError:
+        main()
