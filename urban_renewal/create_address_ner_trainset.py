@@ -1,40 +1,24 @@
 import os
 from pathlib import Path
-from typing import Dict, List, Tuple, TypeAlias, Union
+from typing import Union
 
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import spacy
-from spacy.tokens import DocBin
 import typer
 import usaddress
 
 from urban_renewal.config import PROCESSED_DATA_DIR, RAW_DATA_DIR, INTERIM_DATA_DIR
-
-Label : TypeAlias = Tuple[int, int, str]
-LabeledExample : TypeAlias = Tuple[str, List[Label]]
+from urban_renewal.preprocessing import (
+    LabeledExample, 
+    clean_streetname, 
+    construct_street_name, 
+    create_address_label,
+    examples_to_spacy
+)
 
 app = typer.Typer()
-
-def clean_title(title):
-    return title.replace('.', '').replace('&', 'and')
-
-def construct_street_name(x : Dict[str, str]) -> str:
-    """
-    Constructs a street name from usaddress tags
-    """
-    if not x.get('StreetName', False):
-        return np.nan
-    street_parts = []
-    for key in ['StreetNamePreDirectional', 'StreetName', 'StreetNamePostType', 'StreetNamePostDirectional']:
-        part = x.get(key, False)
-        if not part:
-            continue
-
-        street_parts.append(part)
-
-    return ' '.join(street_parts).strip()
 
 @app.command()
 def main(
@@ -48,14 +32,13 @@ def main(
 ):
     nlp = spacy.blank("en")
     locations = pd.read_csv(input_path)
+    np.random.seed(random_state)
 
     street_mask = locations.street.notna()
-    locations.loc[street_mask, 'street_address'] = locations[street_mask].street.str.split(',').str[0].apply(clean_title)
-    locations['title_cleaned'] = locations.title.apply(clean_title)
-
+    locations.loc[street_mask, 'street_address'] = locations[street_mask].street.str.split(',').str[0].apply(clean_streetname)
+    locations['title_cleaned'] = locations.title.apply(clean_streetname)
 
     title_contains_street = locations[street_mask].apply(lambda x : x.street_address in x.title_cleaned, axis=1)
-
 
     labeled_examples = locations[street_mask&title_contains_street]
     le_last_index = len(labeled_examples) - 1    
@@ -75,11 +58,6 @@ def main(
     def replace_street(new_street: str) -> str:
         row = labeled_examples.iloc[np.random.randint(0, le_last_index)]
         return row.title_cleaned.replace(row.street_address, new_street)
-
-    def create_address_label(title : str, street : str) -> Label:
-        start = title.find(street)
-        end  = start + len(street)
-        return (start, end, 'ADDRESS')
 
     def create_labeled_example(new_street : str, example : Union[str, bool] = False) -> LabeledExample:
         if not example:
@@ -128,34 +106,17 @@ def main(
 
     all_examples = current_examples + intersection_examples + block_examples + range_examples
 
-
     train_set, remainder = train_test_split(all_examples, test_size=0.2)
     eval_set, test_set = train_test_split(remainder, test_size=0.5)
 
-
-    def examples_to_spacy(dataset, outputfile):
-        count = 0
-        db = DocBin()
-        for text, annotations in dataset:
-            doc = nlp(text)
-            ents = []
-            for start, end, label in annotations:
-                span = doc.char_span(start, end, label=label)
-                ents.append(span)
-            try:
-                doc.ents = ents
-                db.add(doc)
-            except Exception as e:
-                count = count + 1
-        print(count)
-        db.to_disk(outputfile)
-
-
-
-    root_path = '../data/processed/address_ner'
-    os.makedirs(root_path, exist_ok=True)
+    os.makedirs(output_folder, exist_ok=True)
 
     for dataset, outputfile in zip([train_set, eval_set, test_set], ['train.spacy', 'eval.spacy', 'test.spacy']):
-        examples_to_spacy(dataset, root_path + '/' + outputfile)
+        examples_to_spacy(dataset, output_folder / outputfile, nlp)
 
+    locations.to_csv(output_path, index=False)
+
+
+if __name__ == '__main__':
+    app()
 

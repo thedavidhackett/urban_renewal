@@ -5,3 +5,14 @@ stages:
     - urban_renewal/scrape_urban_renewal_locations.py
     outs:
     - data/raw/urban_renewal_location_photos.csv
+  create_address_ner_training_data:
+    cmd: python urban_renewal/create_address_ner_trainset.py 2000 200 200 692025
+    deps:
+    - urban_renewal/create_address_ner_trainset.py
+    - data/raw/urban_renewal_location_photos.csv
+    outs:
+    - data/processed/address_ner/eval.spacy
+    - data/processed/address_ner/test.spacy
+    - data/processed/address_ner/train.spacy
+    - data/interim/urban_renewal_locations_v1.csv
+
