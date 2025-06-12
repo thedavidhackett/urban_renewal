@@ -15,7 +15,6 @@ stages:
     - data/processed/address_ner/test.spacy
     - data/processed/address_ner/train.spacy
     - data/interim/urban_renewal_locations_v1.csv
-
   train_address_ner:
     cmd: python -m spacy train models/address_ner/config.cfg --paths.train 
       data/processed/address_ner/train.spacy --paths.dev 
@@ -27,3 +26,12 @@ stages:
     outs:
     - models/address_ner/model-last
     - models/address_ner/model_best
+  test_address_ner:
+    cmd: python -m spacy evaluate models/address_ner/model-best 
+      data/processed/address_ner/test.spacy   --output 
+      models/address_ner/metrics_test.json
+    deps:
+    - data/processed/address_ner/test.spacy
+    - models/address_ner/model-best
+    outs:
+    - models/address_ner/metrics_test.json
