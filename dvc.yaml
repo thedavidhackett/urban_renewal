@@ -16,3 +16,14 @@ stages:
     - data/processed/address_ner/train.spacy
     - data/interim/urban_renewal_locations_v1.csv
 
+  train_address_ner:
+    cmd: python -m spacy train models/address_ner/config.cfg --paths.train 
+      data/processed/address_ner/train.spacy --paths.dev 
+      data/processed/address_ner/eval.spacy --output ./models/address_ner
+    deps:
+    - data/processed/address_ner/eval.spacy
+    - data/processed/address_ner/train.spacy
+    - models/address_ner/config.cfg
+    outs:
+    - models/address_ner/model-last
+    - models/address_ner/model_best
