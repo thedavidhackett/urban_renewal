@@ -43,3 +43,10 @@ stages:
     - models/address_ner/model-best
     outs:
     - data/interim/urban_renewal_locations_v2.csv
+  regex_extract_addresses:
+    cmd: python urban_renewal/regex_extract_addresses.py title_cleaned 
+      street_address
+    deps:
+    - data/interim/urban_renewal_locations_v2.csv
+    outs:
+    - data/interim/urban_renewal_locations_v3.csv
