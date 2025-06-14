@@ -91,12 +91,7 @@ def main(
     ).apply(
         lambda x : create_labeled_example(x.street_address, x.title_cleaned),
         axis=1
-    ).tolist()
-
-
-    n_intersections = 2000
-    n_blocks = 200
-    n_street_range = 200
+    ).tolist() 
 
 
     intersection_examples = [create_intersection_example() for _ in range(n_intersections)]

@@ -1,0 +1,89 @@
+schema: '2.0'
+stages:
+  scrape-data:
+    cmd: python urban_renewal/scrape_urban_renewal_locations.py
+    deps:
+    - path: urban_renewal/scrape_urban_renewal_locations.py
+      hash: md5
+      md5: 77d617c8d9f3318a02ccbc63a55ebf76
+      size: 2120
+    outs:
+    - path: data/raw/urban_renewal_location_photos.csv
+      hash: md5
+      md5: 1b559a2f89c072dcb446454113723c26
+      size: 14652168
+  create_address_ner_training_data:
+    cmd: python urban_renewal/create_address_ner_trainset.py 5000 500 500 692025
+    deps:
+    - path: data/raw/urban_renewal_location_photos.csv
+      hash: md5
+      md5: 1b559a2f89c072dcb446454113723c26
+      size: 14652168
+    - path: urban_renewal/create_address_ner_trainset.py
+      hash: md5
+      md5: c1a94443ac563d1cffd92e4e9556a6b0
+      size: 4271
+    outs:
+    - path: data/interim/urban_renewal_locations_v1.csv
+      hash: md5
+      md5: c1c7f18d9f76a5c2db940136e7202942
+      size: 15779390
+    - path: data/processed/address_ner/eval.spacy
+      hash: md5
+      md5: b1f0fa68498525b4cfe29ad53ae30d64
+      size: 71621
+    - path: data/processed/address_ner/test.spacy
+      hash: md5
+      md5: 36df944f1cb3f97be8b5acd987354939
+      size: 70286
+    - path: data/processed/address_ner/train.spacy
+      hash: md5
+      md5: e810bdd0f344b6a7a02b8cbf1515545c
+      size: 525821
+  train_address_ner:
+    cmd: python -m spacy train models/address_ner/config.cfg --paths.train 
+      data/processed/address_ner/train.spacy --paths.dev 
+      data/processed/address_ner/eval.spacy --output ./models/address_ner
+    deps:
+    - path: data/processed/address_ner/eval.spacy
+      hash: md5
+      md5: b1f0fa68498525b4cfe29ad53ae30d64
+      size: 71621
+    - path: data/processed/address_ner/train.spacy
+      hash: md5
+      md5: e810bdd0f344b6a7a02b8cbf1515545c
+      size: 525821
+    - path: models/address_ner/config.cfg
+      hash: md5
+      md5: 63615ab047ef37fb29763f9804638b8e
+      size: 2717
+    outs:
+    - path: models/address_ner/model-best
+      hash: md5
+      md5: b6456c700926c19261a83e88ce834fad.dir
+      size: 465211803
+      nfiles: 13
+    - path: models/address_ner/model-last
+      hash: md5
+      md5: f4c6772bc814b1546bb29571736f9206.dir
+      size: 465211802
+      nfiles: 13
+  test_address_ner:
+    cmd: python -m spacy evaluate models/address_ner/model-best 
+      data/processed/address_ner/test.spacy --output 
+      models/address_ner/metrics_test.json
+    deps:
+    - path: data/processed/address_ner/test.spacy
+      hash: md5
+      md5: 36df944f1cb3f97be8b5acd987354939
+      size: 70286
+    - path: models/address_ner/model-best
+      hash: md5
+      md5: b6456c700926c19261a83e88ce834fad.dir
+      size: 465211803
+      nfiles: 13
+    outs:
+    - path: models/address_ner/metrics_test.json
+      hash: md5
+      md5: d3321ba4512d32ca109deceb65349fc8
+      size: 274
