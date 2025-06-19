@@ -37,7 +37,7 @@ stages:
     outs:
     - models/address_ner/metrics_test.json
   nlp_extract_addresses:
-    cmd: python nlp_extract_addresses.py title_cleaned street_address
+    cmd: python urban_renewal/nlp_extract_addresses.py title_cleaned street_address
     deps:
     - data/interim/urban_renewal_locations_v1.csv
     - models/address_ner/model-best
@@ -50,3 +50,11 @@ stages:
     - data/interim/urban_renewal_locations_v2.csv
     outs:
     - data/interim/urban_renewal_locations_v3.csv
+  geocode_addresses:
+    cmd: python urban_renewal/geocode_addresses.py
+    deps:
+    - data/interim/urban_renewal_locations_v4.csv
+    - urban_renewal/geocode_addresses.py
+    outs:
+    - data/interim/urban_renewal_locations_v5.csv
+    - data/processed/urban_renewal_addresses.geojson

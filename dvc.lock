@@ -87,3 +87,54 @@ stages:
       hash: md5
       md5: d3321ba4512d32ca109deceb65349fc8
       size: 274
+  nlp_extract_addresses:
+    cmd: python urban_renewal/nlp_extract_addresses.py title_cleaned 
+      street_address
+    deps:
+    - path: data/interim/urban_renewal_locations_v1.csv
+      hash: md5
+      md5: c1c7f18d9f76a5c2db940136e7202942
+      size: 15779390
+    - path: models/address_ner/model-best
+      hash: md5
+      md5: b6456c700926c19261a83e88ce834fad.dir
+      size: 465211803
+      nfiles: 13
+    outs:
+    - path: data/interim/urban_renewal_locations_v2.csv
+      hash: md5
+      md5: b5ef7d1ba5b26e6e104fdcb08d0384de
+      size: 15869525
+  regex_extract_addresses:
+    cmd: python urban_renewal/regex_extract_addresses.py title_cleaned 
+      street_address
+    deps:
+    - path: data/interim/urban_renewal_locations_v2.csv
+      hash: md5
+      md5: b5ef7d1ba5b26e6e104fdcb08d0384de
+      size: 15869525
+    outs:
+    - path: data/interim/urban_renewal_locations_v3.csv
+      hash: md5
+      md5: b2c528f2c64ceb6b19d1814d103e2b5f
+      size: 15922075
+  geocode_addresses:
+    cmd: python urban_renewal/geocode_addresses.py
+    deps:
+    - path: data/interim/urban_renewal_locations_v4.csv
+      hash: md5
+      md5: 93d3453db6c83a741655ee13c704699e
+      size: 15869590
+    - path: urban_renewal/geocode_addresses.py
+      hash: md5
+      md5: a80ad31054408819383e77022730ec9d
+      size: 1941
+    outs:
+    - path: data/interim/urban_renewal_locations_v5.csv
+      hash: md5
+      md5: e5f9bf7495a9ea767568680fc3015145
+      size: 16546366
+    - path: data/processed/urban_renewal_addresses.geojson
+      hash: md5
+      md5: a48b0e0c622b77491c5ce3c04a33f633
+      size: 1173631
