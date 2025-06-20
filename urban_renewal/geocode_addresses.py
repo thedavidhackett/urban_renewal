@@ -24,11 +24,12 @@ def main(
     df['city'] = 'CHICAGO'
 
     address_cols = ['street_address_cleaned', 'city', 'state', 'zip']
-    addresses = df.loc[df.street.notna(), address_cols].drop_duplicates()
+    addresses = df.loc[df.street_address.notna(), address_cols].drop_duplicates()
     addresses['address_id'] = range(1, len(addresses) + 1)
 
 
     df_with_address_id = df.merge(addresses, how='left')
+    df_with_address_id.address_id = df_with_address_id.address_id.fillna(-1).astype(int)
     df_with_address_id.to_csv(output_path, index=False)
 
     with tempfile.TemporaryDirectory() as dirname:
