@@ -5,7 +5,7 @@ from batchcensusgeocode import get_census_geocode_batch_results
 import geopandas as gpd
 import pandas as pd
 import typer
-from urban_renewal.config import INTERIM_DATA_DIR, PROCESSED_DATA_DIR
+from urban_renewal.config import INTERIM_DATA_DIR
 
 app = typer.Typer()
 
@@ -13,8 +13,8 @@ app = typer.Typer()
 def main(
     inputpath : Path = INTERIM_DATA_DIR / 'urban_renewal_locations_v4.csv',
     output_path : Path = INTERIM_DATA_DIR / 'urban_renewal_locations_v5.csv',
-    geodataframe_path : Path = PROCESSED_DATA_DIR / 'urban_renewal_addresses.geojson'
-
+    geodataframe_path : Path = INTERIM_DATA_DIR / 'urban_renewal_addresses_v1.geojson',
+    unmatched_path : Path = INTERIM_DATA_DIR / 'unmatched_addresses.csv'
 ):
     df = pd.read_csv(inputpath)
 
@@ -61,6 +61,9 @@ def main(
 
 
     gdf.to_file(geodataframe_path)
+
+    unmatched_address_ids = gdf[gdf.match == 'No_Match'].address_id.astype(int)
+    addresses[addresses.address_id.astype(int).isin(unmatched_address_ids)].to_csv(unmatched_path)
 
 
 if __name__ == '__main__':
