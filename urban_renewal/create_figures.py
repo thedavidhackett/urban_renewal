@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import typer
-from urban_renewal.config import EXTERNAL_DATA_DIR, FIGURES_DIR, INTERIM_DATA_DIR
+from urban_renewal.config import DOCS_DIR, EXTERNAL_DATA_DIR, FIGURES_DIR, INTERIM_DATA_DIR
 
 GLOBAL_CRS = 'EPSG:3435'
 
@@ -132,7 +132,7 @@ def main():
         }
     )
 
-    fig.write_html(FIGURES_DIR / "urban_renewal_projects.html")
+    fig.write_html(DOCS_DIR / "urban_renewal_projects.html")
 
 
     fig, axes = plt.subplots(2,3, figsize=(8,8), layout='tight')
