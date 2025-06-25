@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
             name: urban_renewal_projects
-            path: ./reports/figures/urban_renewal_projects.html
+            path: reports/figures
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
