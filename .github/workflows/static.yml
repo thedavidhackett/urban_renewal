@@ -36,8 +36,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: 'reports/figures/urban_renewal_projects.html'
+            name: urban_renewal_projects
+            path: reports/figures/urban_renewal_projects.html
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
