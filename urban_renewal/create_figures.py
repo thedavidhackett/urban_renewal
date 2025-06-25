@@ -49,8 +49,9 @@ def main():
 
     gdf_with_dates['year'] = gdf_with_dates.first_date.dt.year
 
-    gdf_with_dates['lon'] = gdf_with_dates.geometry.x
-    gdf_with_dates['lat'] = gdf_with_dates.geometry.y
+    coords = gdf_with_dates.coordinate.str.split(',')
+    gdf_with_dates['lon'] = coords.str[0].astype(float)
+    gdf_with_dates['lat'] = coords.str[1].astype(float)
 
     max_year = int(gdf_with_dates.year.max())
     min_year = int(gdf_with_dates.year.min())
@@ -90,12 +91,19 @@ def main():
             'lat': 0,  # out of view
             'lon': 0,
             'year': 0,
-            'frame_year': first_frame_year,
+            'Current Year': first_frame_year,
             'weight': 0.0001,
             'Five Year Period': b
         })
 
     df_anim = pd.concat([df_anim, pd.DataFrame(dummy_rows)], ignore_index=True)
+
+    df_anim = df_anim.rename(columns={
+        'parsed': 'Project Address',
+    })
+
+    df_anim['First Photo Taken'] = df_anim.first_date.astype(str)
+    df_anim['Last Photo Taken'] = df_anim.last_date.astype(str)
 
     fig = px.scatter_mapbox(
         df_anim,
@@ -111,7 +119,17 @@ def main():
         category_orders={"Five Year Period": all_bins},
         height=800,
         size_max=5,
-        color_discrete_sequence=px.colors.qualitative.Safe
+        color_discrete_sequence=px.colors.qualitative.Safe,
+        hover_data={
+            'Project Address': True, 
+            'First Photo Taken': True, 
+            'Last Photo Taken': True,
+            'Five Year Period': False,
+            'weight': False,
+            'Current Year': False,
+            'lat': False,
+            'lon': False
+        }
     )
 
     fig.write_html(FIGURES_DIR / "urban_renewal_projects.html")
