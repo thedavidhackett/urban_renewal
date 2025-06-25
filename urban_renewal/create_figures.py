@@ -132,7 +132,7 @@ def main():
         }
     )
 
-    fig.write_html(DOCS_DIR / "urban_renewal_projects.html")
+    fig.write_html(DOCS_DIR / "docs/urban/urban_renewal_projects.html")
 
 
     fig, axes = plt.subplots(2,3, figsize=(8,8), layout='tight')

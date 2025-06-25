@@ -1,4 +1,7 @@
-site_name: urban_renewal
+site_name: Urban Renewal Projects in Chicago
 # 
 site_author: thedavidhackett
-# 
+#
+
+nav:
+  - Home: index.md

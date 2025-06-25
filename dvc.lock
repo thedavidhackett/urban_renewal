@@ -159,12 +159,12 @@ stages:
       size: 16546600
     - path: urban_renewal/create_figures.py
       hash: md5
-      md5: b72e73a82ac798eaae02ff06380be571
-      size: 4560
+      md5: 8c618c6bf324803f66b5df18d8a0def7
+      size: 4571
     outs:
-    - path: docs/urban_renewal_projects.html
+    - path: docs/docs/urban/urban_renewal_projects.html
       hash: md5
-      md5: 4c5319649b76e247b72a42eeb9c36a9c
+      md5: efb9c366a86bd5f4df3c0dbcb41c7e45
       size: 6901506
     - path: reports/figures/urban_renewal_locations_by_time_period.png
       hash: md5

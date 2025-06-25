@@ -71,5 +71,5 @@ stages:
     outs:
     - reports/figures/urban_renewal_locations_by_time_period.png:
         cache: false
-    - docs/urban_renewal_projects.html:
+    - docs/docs/urban/urban_renewal_projects.html:
         cache: false

@@ -1,10 +1,9 @@
-# urban_renewal documentation!
+# Urban Renewal
 
 ## Description
 
 Visualizing and Analyzing Urban Renewal Projects in Chicago
 
-## Commands
 
-The Makefile contains the central entry points for common tasks related to this project.
+<iframe src="urban/urban_renewal_projects.html" width="100%" height="800" style="border:none;"></iframe>
 
