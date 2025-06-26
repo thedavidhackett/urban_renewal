@@ -60,7 +60,6 @@ stages:
     - data/interim/urban_renewal_locations_v5.csv
     - data/interim/urban_renewal_addresses_v1.geojson
     - data/interim/unmatched_addresses.csv
-
   create_figures:
     cmd: python urban_renewal/create_figures.py
     deps:

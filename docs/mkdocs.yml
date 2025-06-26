@@ -1,7 +1,10 @@
 site_name: Urban Renewal Projects in Chicago
 # 
-site_author: thedavidhackett
-#
+site_author: David Hackett
 
+theme:
+  name: material
+#
 nav:
   - Home: index.md
+  - Interactive Map: urban_renewal_project_locations_overtime.md
